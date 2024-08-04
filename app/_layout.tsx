@@ -11,23 +11,7 @@ const Tab = createBottomTabNavigator();
 const AppTabs = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName: string;
-
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Questionario') {
-            iconName = 'help-circle';
-          } else if (route.name === 'Ranking') {
-            iconName = 'trophy';
-          } else {
-            iconName = 'help'; // Valor padrão para ícone
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
+      screenOptions={{headerShown: false}}
     >
       {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
       <Tab.Screen name="Questionario" component={Questionario} />
