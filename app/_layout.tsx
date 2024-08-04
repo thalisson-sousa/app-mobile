@@ -14,8 +14,8 @@ const AppTabs = () => {
       screenOptions={{headerShown: false}}
     >
       {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
-      <Tab.Screen name="Questionario" component={Questionario} />
-      <Tab.Screen name="Ranking" component={Ranking} />
+      <Tab.Screen name="questionario" component={Questionario} />
+      <Tab.Screen name="ranking" component={Ranking} />
     </Tab.Navigator>
   );
 };

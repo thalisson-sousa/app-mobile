@@ -1,74 +1,104 @@
-const jsonServer = require('json-server');
-const server = jsonServer.create();
-const router = jsonServer.router('db.json');
-const middlewares = jsonServer.defaults();
+import express from 'express';
+import { readFileSync, writeFileSync } from 'fs';
 
-server.use(middlewares);
-server.use(jsonServer.bodyParser);
-server.post('/users', (req, res) => {
-    const db = router.db;
+const app = express();
+const port = 3000;
+
+// Middleware para analisar o corpo das requisições
+app.use(express.json());
+
+// Mock de banco de dados
+const dbFilePath = 'db.json';
+
+// Função para ler o banco de dados
+const readDB = () => {
+    try {
+        const data = readFileSync(dbFilePath);
+        return JSON.parse(data);
+    } catch (err) {
+        return { users: [] }; // Retorna um banco de dados vazio se houver um erro
+    }
+};
+
+// Função para salvar o banco de dados
+const saveDB = (db) => {
+    writeFileSync(dbFilePath, JSON.stringify(db, null, 2));
+};
+
+// Endpoint para criar um usuário
+app.post('/users', (req, res) => {
     const { name } = req.body;
+    const db = readDB();
 
     if (!name) {
         return res.status(400).json({ error: 'O nome é obrigatório' });
     }
 
     // Verifica se o nome já está em uso
-    const existingUser = db.get('users').find({ name }).value();
+    const existingUser = db.users.find(user => user.name === name);
     if (existingUser) {
         return res.status(400).json({ error: 'Nome de usuário já em uso' });
     }
 
     // Define o id como um número incrementado
-    const currentId = db.get('users').size().value();
-    const id = parseInt(currentId + 1, 10);  // Assegura que o ID é um número
+    const id = db.users.length ? db.users[db.users.length - 1].id + 1 : 1;
 
     // Cria um novo usuário com score inicial de 0
     const user = { id, name, score: 0 };
 
     // Adiciona o novo usuário ao banco de dados
-    db.get('users').push(user).write();
-    console.log(`Usuário criado: ${JSON.stringify(user)}`); // Log para depuração
+    db.users.push(user);
+    saveDB(db);
+
+    console.log(`Usuário criado: ${JSON.stringify(user)}`);
     res.json(user);
 });
 
-
 // Endpoint para atualizar um usuário
-server.put('/users/:id', (req, res) => {
-    const db = router.db;
+app.put('/users/:id', (req, res) => {
     const { id } = req.params;
     const { name, score } = req.body;
-    if (!name && score === undefined) {
-        return res.status(400).json({ error: 'Name or score is required' });
+    const db = readDB();
+
+    const userIndex = db.users.findIndex(user => user.id === parseInt(id));
+    if (userIndex === -1) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
     }
-    const user = db.get('users').find({ id: parseInt(id) }).assign({ name, score }).write();
-    if (user) {
-        res.json(user);
-    } else {
-        res.status(404).json({ error: 'User not found' });
-    }
+
+    const updatedUser = { ...db.users[userIndex], ...req.body };
+    db.users[userIndex] = updatedUser;
+    saveDB(db);
+
+    res.json(updatedUser);
 });
 
 // Endpoint para obter o ranking dos usuários
-server.get('/ranking', (req, res) => {
-    const db = router.db;
-    const ranking = db.get('users').sortBy('score').reverse().value();
+app.get('/ranking', (req, res) => {
+    const db = readDB();
+    const ranking = db.users.sort((a, b) => b.score - a.score);
     res.json(ranking);
 });
 
 // Endpoint para buscar um usuário pelo nome
-server.get('/users/by-name/:name', (req, res) => {
-    const db = router.db;
+app.get('/users/by-name/:name', (req, res) => {
     const { name } = req.params;
-    const user = db.get('users').find({ name }).value();
+    const db = readDB();
+
+    const user = db.users.find(user => user.name === name);
     if (user) {
         res.json(user);
     } else {
-        res.status(404).json({ error: 'User not found' });
+        res.status(404).json({ error: 'Usuário não encontrado' });
     }
 });
 
-server.use(router);
-server.listen(3000, () => {
-    console.log('JSON Server is running on http://localhost:3000');
+// Endpoint para obter todos os usuários
+app.get('/users', (req, res) => {
+    const db = readDB();
+    res.json(db.users);
+});
+
+// Inicia o servidor
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
 });
