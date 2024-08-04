@@ -11,7 +11,7 @@ const Home = ({ navigation }) => {
   const handleStartQuiz = async () => {
     try {
       // Enviar o nome do usuário para a API e obter a resposta
-      const response = await axios.post('http://localhost:3000/users', { name: username });
+      const response = await axios.post('http://165.227.218.157:8080/users/', { name: username });
       const { id, name, score } = response.data;
 
       // Armazenar o nome do usuário no AsyncStorage
