@@ -17,10 +17,10 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
- name="Home" component={Home} 
- options={{ headerShown: false }}
- />
-        <Stack.Screen name="Questionario" component={AppNavigator} />
+          name="home" component={Home}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="questionario" component={AppNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -28,12 +28,16 @@ const App = () => {
 
 const AppNavigator = () => {
   return (
-    
+
     <Tab.Navigator
-      screenOptions={{headerShown: false }}
-     >
-      <Tab.Screen name="Questionario" component={Questionario} />
-      <Tab.Screen name="Ranking" component={RankingScreen} />
+      screenOptions={{ headerShown: false,
+        tabBarActiveBackgroundColor:'#6c4c40' ,
+        tabBarInactiveBackgroundColor:'#795548' 
+      }}
+      
+    >
+      <Tab.Screen name="questionario" component={Questionario} />
+      <Tab.Screen name="ranking" component={RankingScreen} />
     </Tab.Navigator>
   );
 };

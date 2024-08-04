@@ -1,16 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Pressable } from 'react-native';
-import Pergunta from './Pergunta'; // Importe o componente Pergunta
-import perguntas from '@/app/data/constants/perguntas'; // Certifique-se de que o caminho está correto
+import { View, StyleSheet, Text, ImageBackground, Alert } from 'react-native';
+import axios from 'axios';
+import Pergunta from './Pergunta'; 
+import perguntas from '@/app/data/constants/perguntas'; 
 import Resultado from './Resultado';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Questionario = () => {
-  // Armazena o índice da pergunta atual
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [respostas, setRespostas] = useState<number[]>([]);
   const [resultado, setResultado] = useState<number | null>(null);
+  const [userData, setUserData] = useState<{ name: string; score: number } | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
 
-  // Função chamada quando uma opção é selecionada
+  useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        if (storedUsername) {
+          setUsername(storedUsername);
+        }
+      } catch (error) {
+        console.error('Erro ao obter username do AsyncStorage:', error);
+      }
+    };
+
+    fetchUsername();
+  }, []);
+
+  useEffect(() => {
+    if (username) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3000/users/byname/${username}`);
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário:', error);
+        }
+      };
+
+      fetchUserData();
+    }
+  }, [username]);
+
+  useEffect(() => {
+    if (username && userData) {
+      Alert.alert(
+        'Parâmetros recebidos',
+        `Nome: ${username}\nScore: ${userData.score || 'Não disponível'}`,
+        [{ text: 'OK' }]
+      );
+    }
+  }, [username, userData]);
+
   const opcaoSelecionada = (indiceOpcao: number) => {
     setRespostas((prevRespostas) => {
       const novasRespostas = [...prevRespostas];
@@ -18,32 +60,44 @@ const Questionario = () => {
       return novasRespostas;
     });
 
-    // Avançar para a próxima pergunta automaticamente
     if (indiceAtual < perguntas.length - 1) {
       setIndiceAtual(indiceAtual + 1);
     } else {
-      // Se for a última pergunta, calcular o resultado
       calcularResultado();
     }
   };
 
-  // Função para calcular o resultado final
   const calcularResultado = () => {
     const totalPerguntas = perguntas.length;
     const totalCorretas = respostas.reduce((total, resposta, indice) => {
       return resposta === perguntas[indice].resposta ? total + 1 : total;
     }, 0);
-    setResultado(totalCorretas);
+    const pontuacao = totalCorretas * 10; // Cada pergunta vale 10 pontos
+    setResultado(pontuacao);
+    atualizarRanking(pontuacao); // Atualiza o ranking após calcular o resultado
   };
 
-  // Função para reiniciar o questionário
+  const atualizarRanking = async (pontuacao: number) => {
+    if (username) {
+      try {
+        await axios.put(`http://localhost:3000/users/byname/${username}`, { score: pontuacao });
+        
+        const rankingResponse = await axios.get('http://localhost:3000/ranking');
+        console.log('Ranking atualizado:', rankingResponse.data);
+      } catch (error) {
+        console.error('Erro ao atualizar o ranking:', error);
+      }
+    }
+  };
+
   const reiniciar = () => {
     setIndiceAtual(0);
     setRespostas([]);
     setResultado(null);
   };
 
-  // Use efeito para calcular o resultado após a última pergunta
+  const background = require('@/assets/images/4.png');
+
   useEffect(() => {
     if (indiceAtual === perguntas.length && resultado === null) {
       calcularResultado();
@@ -51,46 +105,53 @@ const Questionario = () => {
   }, [indiceAtual]);
 
   return (
-    <View style={styles.container}>
-      {resultado === null ? (
-        <>
-          <Text style={styles.progressoTexto}>{`${indiceAtual + 1}/${perguntas.length}`}</Text>
-
-          <Pergunta
-            pergunta={perguntas[indiceAtual]}
-            opcaoSelecionada={opcaoSelecionada}
+    <ImageBackground
+      source={background}
+      style={styles.imageBackground}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
+        {resultado === null ? (
+          <>
+            <Text style={styles.progressoTexto}>{`${indiceAtual + 1}/${perguntas.length}`}</Text>
+            <Pergunta
+              pergunta={perguntas[indiceAtual]}
+              opcaoSelecionada={opcaoSelecionada}
+            />
+          </>
+        ) : (
+          <Resultado
+            pontuacao={resultado}
+            totalDePerguntas={perguntas.length}
+            reiniciar={reiniciar}
           />
-        </>
-      ) : (
-        <Resultado
-          pontuacao={resultado}
-          totalDePerguntas={perguntas.length}
-          reiniciar={reiniciar}
-        />
-      )}
-    </View>
+        )}
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  imageBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    flex: 1,
+    width: '100%',
     padding: 20,
+    justifyContent: 'center', // Alinha o conteúdo verticalmente
+    alignItems: 'center', // Alinha o conteúdo horizontalmente
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', // Cor de fundo semitransparente para melhorar a legibilidade
   },
   progressoTexto: {
     textAlign: 'center',
     marginTop: 10,
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  botaoCalcular: {
-    marginTop: 20,
-    backgroundColor: '#2E9D48',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  textoBotao: {
     color: 'white',
   },
 });
