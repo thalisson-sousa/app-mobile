@@ -1,4 +1,4 @@
-import Pergunta from '@/data/model/Pergunta'
+import Pergunta from '@/app/data/model/Pergunta'
 
 const perguntas: Pergunta[] = [
     {

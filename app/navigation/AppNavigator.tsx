@@ -1,23 +1,24 @@
-// app/AppTabs.tsx
+// AppNavigator.tsx
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '@/app/components/home/Home';
+import { NavigationContainer } from '@react-navigation/native';   
+ // Remova o NavigationContainer
 import Questionario from '@/app/components/questionario/Questionario';
-import Ranking from '@/app/components/ranking/Ranking';
+import RankingScreen from '@/app/components/ranking/Ranking';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
 
-const AppTabs = () => {
+const AppNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route   
+ }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName: string;
+          let   
+ iconName: string;
 
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Questionario') {
+          if (route.name === 'Questionario') {
             iconName = 'help-circle';
           } else if (route.name === 'Ranking') {
             iconName = 'trophy';
@@ -29,11 +30,10 @@ const AppTabs = () => {
         },
       })}
     >
-      {/* <Tab.Screen name="Home" component={HomeScreen} /> */}
       <Tab.Screen name="Questionario" component={Questionario} />
-      <Tab.Screen name="Ranking" component={Ranking} />
+      <Tab.Screen name="Ranking" component={RankingScreen} />
     </Tab.Navigator>
   );
 };
 
-export default AppTabs;
+export default AppNavigator;

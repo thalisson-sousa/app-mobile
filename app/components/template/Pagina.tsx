@@ -4,7 +4,7 @@ export interface PaginaProps {
     children: React.ReactNode
 }
 
-const background = require('@/assets/images/meio-ambiente.jpg')
+const background = require('@/assets/images/4.png')
 
 export default function Pagina(props: PaginaProps) {
     return (
@@ -13,7 +13,7 @@ export default function Pagina(props: PaginaProps) {
                 source={background}
                 resizeMode="cover"
                 style={styles.image}
-                imageStyle={{ opacity: 0.4 }}
+                imageStyle={{ opacity: 0.9 }}
             >
                 {props.children}
             </ImageBackground>
@@ -26,11 +26,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black',
+        // backgroundColor: 'transparent',
     },
     image: {
         flex: 1,
         width: '100%',
+        height:'100%',
         justifyContent: 'center',
         alignItems: 'center',
     },

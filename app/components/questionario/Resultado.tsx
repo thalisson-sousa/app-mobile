@@ -22,15 +22,14 @@ export default function Resultado(props: ResultadoProps) {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        backgroundColor: '#000',
-        padding: 15,
+        padding: 15
     },
     texto: {
-        color: '#bbb',
+        color: '#009d77', 
         fontSize: 20,
     },
     destaque: {
-        color: 'white',
+        color: '#009d77', 
         fontSize: 60,
         fontWeight: '900',
     },

@@ -1,8 +1,7 @@
-import { LinearGradient } from 'expo-linear-gradient'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native';
 
 export interface EnunciadoProps {
-    enunciado: string
+    enunciado: string;
 }
 
 export default function Enunciado(props: EnunciadoProps) {
@@ -10,22 +9,23 @@ export default function Enunciado(props: EnunciadoProps) {
         <View style={styles.container}>
             <Text style={styles.texto}>{props.enunciado}</Text>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        backgroundColor: 'green',
+        backgroundColor: 'rgba(0, 128, 0, 0.9)', // Verde com 90% de opacidade
         padding: 20,
         marginHorizontal: 20,
         borderRadius: 10,
+        borderWidth: 1, // Define a largura da borda
+        borderColor: 'green', // Cor da borda
     },
     texto: {
-        color: 'white',
+        color: '#D3F9D8', // Verde pérola em hexadecimal
         fontSize: 23,
         textAlign: 'center',
         fontWeight: 'bold',
-        //opacity: 0.8,
     },
-})
+});

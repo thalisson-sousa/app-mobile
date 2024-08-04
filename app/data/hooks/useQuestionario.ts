@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import todasAsPerguntas from '@/data/constants/perguntas'
+import todasAsPerguntas from '@/app/data/constants/perguntas'
 
 export default function useQuestionario() {
     const [indicePergunta, setIndicePergunta] = useState(0)
