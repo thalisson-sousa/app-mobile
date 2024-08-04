@@ -2,27 +2,27 @@
   "users": [
     {
       "id": 1,
-      "name": "Alice",
+      "name": "alice",
       "score": 50
     },
     {
       "id": 2,
-      "name": "Bob",
+      "name": "bob",
       "score": 75
     },
     {
       "id": 3,
-      "name": "Charlie",
+      "name": "charlie",
       "score": 60
     },
     {
       "id": 4,
-      "name": "Novo Usuario",
+      "name": "novousuario",
       "score": 0
     },
     {
       "id": 5,
-      "name": "Jv",
+      "name": "jv",
       "score": 0
     }
   ]

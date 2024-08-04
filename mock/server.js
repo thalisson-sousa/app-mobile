@@ -24,34 +24,27 @@ const readDB = () => {
 const saveDB = (db) => {
     writeFileSync(dbFilePath, JSON.stringify(db, null, 2));
 };
-
-// Endpoint para criar um usuário
 app.post('/users', (req, res) => {
     const { name } = req.body;
     const db = readDB();
 
-    if (!name) {
-        return res.status(400).json({ error: 'O nome é obrigatório' });
-    }
-
-    // Verifica se o nome já está em uso
+    // Verifica se o usuário já existe pelo nome
     const existingUser = db.users.find(user => user.name === name);
+
     if (existingUser) {
-        return res.status(400).json({ error: 'Nome de usuário já em uso' });
+        res.json({ message: 'Usuário já existe', userId: existingUser.id });
+    } else {
+        // Cria um novo usuário
+        const newUser = {
+            id: generateUniqueId(), // Função para gerar um ID único
+            name,
+            // Outros dados do usuário
+        };
+        db.users.push(newUser);
+        writeDB(db); // Escreve as alterações no banco de dados
+
+        res.json({ message: 'Usuário criado com sucesso', userId: newUser.id });
     }
-
-    // Define o id como um número incrementado
-    const id = db.users.length ? db.users[db.users.length - 1].id + 1 : 1;
-
-    // Cria um novo usuário com score inicial de 0
-    const user = { id, name, score: 0 };
-
-    // Adiciona o novo usuário ao banco de dados
-    db.users.push(user);
-    saveDB(db);
-
-    console.log(`Usuário criado: ${JSON.stringify(user)}`);
-    res.json(user);
 });
 
 // Endpoint para atualizar um usuário
@@ -88,7 +81,7 @@ app.get('/users/by-name/:name', (req, res) => {
     if (user) {
         res.json(user);
     } else {
-        res.status(404).json({ error: 'Usuário não encontrado' });
+        res.json({ error: 'Usuário não encontrado' });
     }
 });
 
