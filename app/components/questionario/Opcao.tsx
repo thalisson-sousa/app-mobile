@@ -1,8 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export interface OpcaoProps {
-  indice: number;
-  texto: string;
+  texto: string; // Mantém apenas o texto
   onPress: () => void;
 }
 

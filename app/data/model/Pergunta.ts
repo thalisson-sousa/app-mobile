@@ -1,7 +1,9 @@
 export default interface Pergunta {
-    id: number
-    introducao: string
-    enunciado: string
-    opcoes: string[]
-    resposta: number
+    id: number;
+    statement: string;
+    correctAnswer: string;
+    wrongAnswer1: string;
+    wrongAnswer2: string;
+    wrongAnswer3: string;
+    category: string;
 }

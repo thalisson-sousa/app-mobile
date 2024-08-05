@@ -9,13 +9,18 @@ const Home = ({ navigation }) => {
   const fontsLoaded = useCustomFonts();
 
   const handleStartQuiz = async () => {
+    if (username.trim() === '') {
+      console.error('Nome de usuário não pode estar vazio');
+      return;
+    }
+
     try {
       // Enviar o nome do usuário para a API e obter a resposta
       const response = await axios.post('http://165.227.218.157:8080/users/', { name: username });
       const { id, name, score } = response.data;
 
-      // Armazenar o nome do usuário no AsyncStorage
-      await AsyncStorage.setItem('username', username);
+      // Armazenar os dados do usuário no AsyncStorage
+      await AsyncStorage.setItem('user', JSON.stringify({ id, name, score }));
 
       // Navegar para a tela Questionario passando os dados do usuário
       navigation.navigate('questionario', { name: name, id: id, score: score });
@@ -44,6 +49,7 @@ const Home = ({ navigation }) => {
           style={[styles.input, styles.rounded]}
           placeholder="Digite seu nome"
           onChangeText={(text) => setUsername(text)}
+          value={username}
         />
         <TouchableOpacity style={styles.button} onPress={handleStartQuiz}>
           <Text style={styles.buttonText}>Jogar</Text>
@@ -71,23 +77,23 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 10,
     width: 200,
-    borderColor: '#00997d', // Adiciona a cor da borda
+    borderColor: '#00997d',
   },
   button: {
     width: 200,
     borderColor: '#00997d',
-    borderWidth: 2, // Ajuste a espessura da borda conforme necessário
+    borderWidth: 2,
     borderRadius: 20,
     paddingVertical: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
-    backgroundColor: 'transparent', // Torna o fundo do botão transparente
+    backgroundColor: 'transparent',
   },
   buttonText: {
-    color: '#00997d', // Cor do texto do botão
+    color: '#00997d',
     fontSize: 18,
-    fontFamily: 'Rubik', // ou qualquer outra fonte que você esteja usando
+    fontFamily: 'Rubik',
   },
   rounded: {
     borderRadius: 20,

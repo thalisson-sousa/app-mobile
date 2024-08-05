@@ -6,27 +6,27 @@ const RankingScreen = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchRankingData = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/users'); // Substitua pela URL do seu endpoint
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
+  // useEffect(() => {
+  //   const fetchRankingData = async () => {
+  //     try {
+  //       const response = await fetch('http://localhost:3000/users'); // Substitua pela URL do seu endpoint
+  //       if (!response.ok) {
+  //         throw new Error('Network response was not ok');
+  //       }
+  //       const data = await response.json();
 
-        // Ordena os dados por pontuação em ordem decrescente
-        const sortedData = data.sort((a, b) => b.score - a.score);
-        setRankingData(sortedData);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       // Ordena os dados por pontuação em ordem decrescente
+  //       const sortedData = data.sort((a, b) => b.score - a.score);
+  //       setRankingData(sortedData);
+  //     } catch (error) {
+  //       setError(error.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchRankingData();
-  }, []);
+  //   fetchRankingData();
+  // }, []);
 
   if (loading) {
     return (

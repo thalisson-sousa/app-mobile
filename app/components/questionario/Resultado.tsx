@@ -11,7 +11,7 @@ export default function Resultado(props: ResultadoProps) {
     return (
         <View style={styles.container}>
             <Text style={styles.texto}>Você acertou</Text>
-            <Text style={styles.destaque}>{Math.round((pontuacao / totalDePerguntas) * 100)}%</Text>
+            <Text style={styles.destaque}>{Math.round((pontuacao / totalDePerguntas) * 10)}%</Text>
             <Pressable style={styles.botao} onPress={reiniciar}>
                 <Text style={styles.textoBotao}>Reiniciar</Text>
             </Pressable>

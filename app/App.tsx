@@ -31,8 +31,8 @@ const AppNavigator = () => {
 
     <Tab.Navigator
       screenOptions={{ headerShown: false,
-        tabBarActiveBackgroundColor:'#6c4c40' ,
-        tabBarInactiveBackgroundColor:'#795548' 
+        tabBarActiveBackgroundColor:'#7C3D10' ,
+        tabBarInactiveBackgroundColor:'#964C16' 
       }}
       
     >
