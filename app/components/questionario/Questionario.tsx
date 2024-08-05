@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Button, ImageBackground, Alert } from 'react-native';
 import axios from 'axios';
-import Pergunta from './Pergunta'; 
+import Pergunta from './Pergunta';
 import Resultado from './Resultado';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,7 +10,7 @@ const Questionario = () => {
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [respostas, setRespostas] = useState<number[]>([]);
   const [resultado, setResultado] = useState<number | null>(null);
-  const [userData, setUserData] = useState<{ id:number; name: string; score: number } | null>(null);
+  const [userData, setUserData] = useState<{ id: number; name: string; score: number } | null>(null);
   const [perguntas, setPerguntas] = useState<any[]>([]);
   const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,7 +35,7 @@ const Questionario = () => {
 
     fetchUserData();
   }, []);
-  
+
   useEffect(() => {
     if (categoriaSelecionada) {
       const fetchPerguntas = async () => {
@@ -72,12 +72,12 @@ const Questionario = () => {
   }, [indiceAtual]);
 
   const opcaoSelecionada = (indiceOpcao: number) => {
-    const correctAnswer=(perguntas[indiceAtual].correctAnswer);
+    const correctAnswer = (perguntas[indiceAtual].correctAnswer);
     const perguntaAtual = perguntas[indiceAtual];
     // const textoOpcao = perguntaAtual.opcoes[indiceOpcao]; // Obtenha o texto da opção
     console.log(perguntaAtual);
     // console.log('Texto da opção selecionada:', textoOpcao);
-    
+
     // Atualize as respostas com a resposta selecionada
     setRespostas((prevRespostas) => {
       const novasRespostas = [...prevRespostas];
@@ -88,7 +88,7 @@ const Questionario = () => {
 
     // Validação da resposta
     const respostaCerta = perguntas[indiceAtual].correctAnswer;
-    
+
     if (indiceOpcao === respostaCerta) {
       setFeedback('Resposta correta!');
       console.log('Feedback: Resposta correta!');
@@ -109,36 +109,38 @@ const Questionario = () => {
 
   const calcularResultado = () => {
     console.log('Calculando resultado...');
-  
+
     // Número total de perguntas
     const totalPerguntas = perguntas.length;
-  
+
     // Contar o número de respostas corretas
     const totalCorretas = respostas.reduce((total, resposta, indice) => {
       // Aqui você verifica se a resposta selecionada é igual à resposta correta da pergunta
       return resposta === perguntas[indice].correctAnswer ? total + 1 : total;
     }, 0);
-  
+
     // Cada pergunta vale 10 pontos
     const pontuacao = totalCorretas * 10;
-  
+
     console.log('Pontuação final:', pontuacao);
     setResultado(pontuacao);
-  
+
+
     // Atualizar o ranking, se necessário
-    // atualizarRanking(pontuacao);
+    atualizarRanking(pontuacao);
   };
-    
-  // const atualizarRanking = async (pontuacao: number) => {
-  //   if (userData) {
-  //     try {
-  //       console.log('Atualizando ranking para o usuário:', userData.id);
-  //       await axios.put(`http://localhost:3000/users/${userData.id}`, { score: pontuacao });
-  //     } catch (error) {
-  //       console.error('Erro ao atualizar o ranking:', error);
-  //     }
-  //   }
-  // };
+
+  const atualizarRanking = async (pontuacao: number) => {
+    if (userData) {
+      try {
+        console.log('Atualizando ranking para o usuário:', userData.id);
+        
+        await axios.put(`http://165.227.218.157:8080/${userData.id}`, { id: userData.id, name: userData.name, score: pontuacao });
+      } catch (error) {
+        console.error('Erro ao atualizar o ranking:', error);
+      }
+    }
+  };
 
   const reiniciar = () => {
     console.log('Reiniciando o questionário...');
@@ -163,25 +165,25 @@ const Questionario = () => {
       >
         <View style={styles.overlay}>
           <Text style={styles.selecioneCategoriaTexto}>Selecione uma Categoria</Text>
-          <Button title="Natureza" onPress={() => { 
+          <Button title="Natureza" onPress={() => {
             console.log('Categoria selecionada: Natureza');
-            setCategoriaSelecionada('NATURE'); 
-            setStep(2); 
+            setCategoriaSelecionada('NATURE');
+            setStep(2);
           }} />
-          <Button title="Atitudes Ecologicas" onPress={() => { 
+          <Button title="Atitudes Ecologicas" onPress={() => {
             console.log('Categoria selecionada: Atitudes Ecologicas');
-            setCategoriaSelecionada('ECOLOGICAL_ATTITUDES'); 
-            setStep(2); 
+            setCategoriaSelecionada('ECOLOGICAL_ATTITUDES');
+            setStep(2);
           }} />
-          <Button title="Animais" onPress={() => { 
+          <Button title="Animais" onPress={() => {
             console.log('Categoria selecionada: Animais');
-            setCategoriaSelecionada('ANIMALS'); 
-            setStep(2); 
+            setCategoriaSelecionada('ANIMALS');
+            setStep(2);
           }} />
-          <Button title="Mudanças Climaticas" onPress={() => { 
+          <Button title="Mudanças Climaticas" onPress={() => {
             console.log('Categoria selecionada: Mudanças Climaticas');
-            setCategoriaSelecionada('CLIMATE_CHANGE'); 
-            setStep(2); 
+            setCategoriaSelecionada('CLIMATE_CHANGE');
+            setStep(2);
           }} />
         </View>
       </ImageBackground>
@@ -206,10 +208,10 @@ const Questionario = () => {
         >
           <View style={styles.overlay}>
             <Text style={styles.progressoTexto}>Não há perguntas para essa categoria.</Text>
-            <Button title="Voltar" onPress={() => { 
+            <Button title="Voltar" onPress={() => {
               console.log('Voltando para seleção de categoria');
-              setCategoriaSelecionada(null); 
-              setStep(1); 
+              setCategoriaSelecionada(null);
+              setStep(1);
             }} />
           </View>
         </ImageBackground>
@@ -263,9 +265,9 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     padding: 20,
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   progressoTexto: {
     textAlign: 'center',
