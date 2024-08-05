@@ -25,11 +25,11 @@ const styles = StyleSheet.create({
         padding: 15
     },
     texto: {
-        color: '#009d77', 
+        color: 'white', 
         fontSize: 20,
     },
     destaque: {
-        color: '#009d77', 
+        color: 'white', 
         fontSize: 60,
         fontWeight: '900',
     },
